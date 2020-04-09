@@ -1,0 +1,35 @@
+version: '3'
+services:
+  web:
+    image: cardboard/golang:1.9
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/go/src/github.com/nafisfaysal/goapi
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    working_dir: /go/src/github.com/nafisfaysal/goapi
+    command: go run ./cmd/goapi/main.go
+    env_file: .env
+
+  postgres:
+    image: postgres:9.6
+    environment:
+      POSTGRES_PASSWORD: "goapigoapi"
+
+  adminer:
+    image: adminer
+    ports:
+      - "9091:8080"
+    depends_on:
+      - postgres
+    links:
+      - postgres:db
+    volumes:
+      - postgres:/data/db
+
+volumes:
+  postgres:
+    driver: "local"
